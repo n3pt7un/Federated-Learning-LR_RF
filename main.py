@@ -1,16 +1,19 @@
-# This is a sample Python script.
+from datasets import Dataset, DatasetDict
+import pandas as pd
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+# Load your dataset (example: CSV)
+df = pd.read_csv('../Federated-Random-Forest/OS%20Scan-dataset_labels.csv')
 
+# Convert to Hugging Face Dataset
+dataset = Dataset.from_pandas(df)
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+# Perform train-test split (80% train, 20% test)
+split_dataset = dataset.train_test_split(test_size=0.2)
 
+# Access train and test datasets
+train_dataset = split_dataset['train']
+test_dataset = split_dataset['test']
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+# Optionally, save to disk
+train_dataset.to_csv('train_OSscan.csv')
+test_dataset.to_csv('test_OSscan.csv')

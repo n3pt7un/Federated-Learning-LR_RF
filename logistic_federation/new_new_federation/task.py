@@ -3,33 +3,10 @@
 import numpy as np
 from flwr_datasets import FederatedDataset
 from flwr_datasets.partitioner import IidPartitioner
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import SGDClassifier, LogisticRegression
 
 fds = None  # Cache FederatedDataset
 
-
-def load_data_old(partition_id: int, num_partitions: int):
-    """Load partition MNIST data."""
-    # Only initialize `FederatedDataset` once
-    global fds
-    if fds is None:
-        partitioner = IidPartitioner(num_partitions=num_partitions)
-        fds = FederatedDataset(
-            dataset="n3p7un/KitsuneSystemAttackData_osScanDataset",
-            partitioners={"train": partitioner},
-        )
-
-    dataset = fds.load_partition(partition_id, "train").with_format("numpy")
-    features = np.column_stack(dataset.remove_columns(['label', 'Unnamed: 0']))
-    features = features.reshape(features.shape[0], -1)
-    X, y = features, dataset["label"]
-
-    # Split the on edge data: 80% train, 20% test
-    X_train, X_test = X[: int(0.8 * len(X))], X[int(0.8 * len(X)) :]
-    y_train, y_test = y[: int(0.8 * len(y))], y[int(0.8 * len(y)) :]
-    print(f"X_train shape: {X_train.shape}")  # Should be (num_samples, num_features)
-    print(f"X_test shape: {X_test.shape}")  # Should be 2D
-    return X_train, X_test, y_train, y_test
 
 def load_data(partition_id: int, num_partitions: int):
     """Load partition MNIST data."""
@@ -55,18 +32,30 @@ def load_data(partition_id: int, num_partitions: int):
     X_train, X_test = X[: int(0.8 * len(X))], X[int(0.8 * len(X)):]
     y_train, y_test = y[: int(0.8 * len(y))], y[int(0.8 * len(y)):]
 
-    #print(f"X_train shape: {X_train.shape}")  # Should be (samples, features)
-    #print(f"X_test shape: {X_test.shape}")  # Should be 2D
     return X_train, X_test, y_train, y_test
 
 
-def get_model(penalty: str, local_epochs: int):
-
-    return LogisticRegression(
-        penalty=penalty,
-        max_iter=local_epochs,
-        warm_start=True,
-    )
+def get_model(penalty: str, local_epochs: int, loss: str):
+    """Create and return a classifier model.
+    
+    Uses SGDClassifier for 'hinge' loss (SVM) and LogisticRegression for 'log_loss'.
+    """
+    if loss == 'hinge':
+        return SGDClassifier(
+            loss=loss,
+            penalty=penalty,
+            max_iter=local_epochs,
+            warm_start=True,
+            random_state=42
+        )
+    else:  # default to LogisticRegression for 'log_loss'
+        return LogisticRegression(
+            penalty=penalty,
+            max_iter=local_epochs,
+            warm_start=True,
+            random_state=42,
+            solver='saga'  # Efficient solver for L1/L2 penalties
+        )
 
 
 def get_model_params(model):
@@ -88,10 +77,15 @@ def set_model_params(model, params):
 
 
 def set_initial_params(model):
-    n_classes = 2  # Dataset has 10 classes
+    n_classes = 2  # Dataset has 2 classes
     n_features = 115  # Number of features in dataset
-    model.classes_ = np.array([i for i in range(10)])
+    model.classes_ = np.array([i for i in range(n_classes)])
 
-    model.coef_ = np.zeros((n_classes, n_features))
-    if model.fit_intercept:
-        model.intercept_ = np.zeros((n_classes,))
+    if isinstance(model, SGDClassifier):
+        model.coef_ = np.zeros((1, n_features))  # SGDClassifier shape for binary classification
+        if model.fit_intercept:
+            model.intercept_ = np.zeros(1)
+    else:  # LogisticRegression
+        model.coef_ = np.zeros((1, n_features))  # LogisticRegression shape for binary classification
+        if model.fit_intercept:
+            model.intercept_ = np.zeros(1)

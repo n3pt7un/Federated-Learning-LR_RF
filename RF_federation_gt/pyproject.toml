@@ -3,15 +3,17 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "new-new-new-federation"
+name = "rf-federation-gt"
 version = "1.0.0"
-description = ""
+description = "Federated Random Forest with tree merging and pruning"
 license = "Apache-2.0"
 dependencies = [
     "flwr[simulation]>=1.15.2",
     "flwr-datasets[vision]>=0.5.0",
     "scikit-learn>=1.6.1",
-    "joblib"
+    "joblib>=1.2.0",
+    "numpy>=1.24.0",
+    "pandas>=2.0.0"
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -25,11 +27,9 @@ serverapp = "new_new_new_federation.server_app:app"
 clientapp = "new_new_new_federation.client_app:app"
 
 [tool.flwr.app.config]
-num-server-rounds = 1
-penalty = "l2"
+num-server-rounds = 5
 max_depth = 3
 n_trees = 10
-
 
 [tool.flwr.federations]
 default = "local-simulation"

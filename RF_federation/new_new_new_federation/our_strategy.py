@@ -91,8 +91,8 @@ def merge_and_prune_forests(forests, X_test, y_test, n):
 
     # Imposta gli attributi necessari per il funzionamento del modello
     merged_forest.classes_ = forests[0].classes_
-    merged_forest.n_classes_ = forests[0].n_classes_
     merged_forest.n_outputs_ = forests[0].n_outputs_
+    merged_forest.n_classes_ = forests[0].n_classes_
     merged_forest.n_features_in_ = forests[0].n_features_in_
 
     # Applica la funzione di potatura alla foresta unita
@@ -134,7 +134,7 @@ def our_aggregate(results: List[Tuple[ClientProxy, FitRes]], context: Context) -
     y_test = dataset["label"]
 
     # Get number of trees from config and calculate global trees
-    n_trees = int(context.run_config["n_trees"])
+    n_trees = int(2)
     n_trees_global = int(np.ceil(n_trees / 2))
     
     # Merge and prune forests
@@ -186,7 +186,7 @@ class CustomStrat(FedAvg):
 
         # Save the global model for this round
         try:
-            model = get_model(n_trees=10, max_depth=3)
+            model = get_model(n_trees=2, max_depth=3)
             model = set_model_params(model, aggregated_ndarrays)
             dump(model, f'global_tree{server_round}.joblib')
         except Exception as e:

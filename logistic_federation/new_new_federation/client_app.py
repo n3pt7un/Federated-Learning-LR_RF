@@ -1,12 +1,13 @@
 """new-new-federation: A Flower / sklearn app."""
 
 import warnings
-
+import numpy as np
 from sklearn.metrics import log_loss
+from sklearn.linear_model import SGDClassifier
 
 from flwr.client import ClientApp, NumPyClient
 from flwr.common import Context
-from new_new_federation.task import (
+from .task import (
     get_model,
     get_model_params,
     load_data,
@@ -16,12 +17,13 @@ from new_new_federation.task import (
 
 
 class FlowerClient(NumPyClient):
-    def __init__(self, model, X_train, X_test, y_train, y_test):
+    def __init__(self, model, X_train, X_test, y_train, y_test, loss):
         self.model = model
         self.X_train = X_train
         self.X_test = X_test
         self.y_train = y_train
         self.y_test = y_test
+        self.loss = loss
 
     def fit(self, parameters, config):
         set_model_params(self.model, parameters)
@@ -36,11 +38,24 @@ class FlowerClient(NumPyClient):
     def evaluate(self, parameters, config):
         set_model_params(self.model, parameters)
 
-        loss = log_loss(self.y_test, self.model.predict_proba(self.X_test))
+        try:
+            if self.loss == 'hinge':
+                # SGDClassifier with hinge loss doesn't have predict_proba
+                y_pred = self.model.decision_function(self.X_test)
+                # Can't use log_loss with hinge SVM, use another metric
+                loss = np.mean(np.maximum(0, 1 - self.y_test * y_pred))
+            else:
+                # For LogisticRegression
+                y_proba = self.model.predict_proba(self.X_test)
+                loss = log_loss(self.y_test, y_proba)
+        except Exception as e:
+            # Fallback to a simple loss calculation if predict_proba fails
+            print(f"Error calculating loss: {e}")
+            y_pred = self.model.predict(self.X_test)
+            loss = np.mean(y_pred != self.y_test)
+
         accuracy = self.model.score(self.X_test, self.y_test)
-
         return loss, len(self.X_test), {"accuracy": accuracy}
-
 
 
 def client_fn(context: Context):
@@ -49,15 +64,16 @@ def client_fn(context: Context):
 
     X_train, X_test, y_train, y_test = load_data(partition_id, num_partitions)
 
-    # Create LogisticRegression Model
+    # Create Model based on configuration
+    loss = context.run_config["loss"]
     penalty = context.run_config["penalty"]
     local_epochs = context.run_config["local-epochs"]
-    model = get_model(penalty, local_epochs)
+    model = get_model(penalty, local_epochs, loss)
 
-    # Setting initial parameters, akin to model.compile for keras models
+    # Setting initial parameters
     set_initial_params(model)
 
-    return FlowerClient(model, X_train, X_test, y_train, y_test).to_client()
+    return FlowerClient(model, X_train, X_test, y_train, y_test, loss).to_client()
 
 
 # Flower ClientApp
