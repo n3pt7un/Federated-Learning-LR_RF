@@ -47,17 +47,10 @@ The repository is divided into three main directories, each implementing a diffe
     ```
   - Distributed deployment following the Flower documentation.
  
-  ## Useful Resources
+## Useful Resources
 - [Flower Official Website](https://flower.ai)  
 - [Flower Documentation](https://flower.ai/docs)  
 - [Flower GitHub](https://github.com/adap/flower)  
 - [Flower Community Slack](https://flower.ai/slack)  
 
 This repository is designed for experimentation and optimization of Federated Learning with different Machine Learning models. Each folder contains a README with specific instructions for the corresponding method.
-
-
-## Requirements
-
-Make sure you have Python 3.8+ installed and install the required packages with:
-```bash
-pip install -e .
