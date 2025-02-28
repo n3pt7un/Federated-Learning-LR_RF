@@ -8,18 +8,18 @@ from .custom_strategy import CustomFedAvg
 import numpy as np
 
 
+
 def aggregated_metrics(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     """Aggregate metrics from multiple clients."""
     if not metrics:
         return {}
-        
-    accuracy = [num_examples * m.get('accuracy', 0.0) for num_examples, m in metrics]
+
+    accuracy = [num_examples * m['accuracy'] for num_examples, m in metrics]
     total_examples = sum(num_examples for num_examples, _ in metrics)
-    
     if total_examples == 0:
         return {'accuracy': 0.0}
-    
-    return {'accuracy': sum(accuracy)/total_examples}
+
+    return {'accuracy': sum(accuracy) / total_examples}
 
 
 def get_evaluate_fn(model, loss_type):
@@ -81,7 +81,7 @@ def server_fn(context: Context):
         fraction_evaluate=1.0,
         min_available_clients=2,
         initial_parameters=initial_parameters,
-        evaluate_fn=get_evaluate_fn(model, loss),
+        # evaluate_fn=get_evaluate_fn(model, loss),
         evaluate_metrics_aggregation_fn=aggregated_metrics,
     )
 

@@ -46,14 +46,12 @@ def get_model(penalty: str, local_epochs: int, loss: str):
             penalty=penalty,
             max_iter=local_epochs,
             warm_start=True,
-            random_state=42
         )
     else:  # default to LogisticRegression for 'log_loss'
         return LogisticRegression(
             penalty=penalty,
             max_iter=local_epochs,
             warm_start=True,
-            random_state=42,
             solver='saga'  # Efficient solver for L1/L2 penalties
         )
 

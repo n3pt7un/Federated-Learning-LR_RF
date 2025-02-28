@@ -35,6 +35,8 @@ class FlowerClient(NumPyClient):
 
         return get_model_params(self.model), len(self.X_train), {}
 
+
+
     def evaluate(self, parameters, config):
         set_model_params(self.model, parameters)
 
