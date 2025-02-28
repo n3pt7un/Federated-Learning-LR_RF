@@ -1,54 +1,54 @@
 # Federated Learning with Flower
 
-Questa repository contiene implementazioni di Federated Learning utilizzando Flower (flwr) per diversi algoritmi di Machine Learning. L'obiettivo è consentire a più client di collaborare nell'addestramento di modelli senza condividere direttamente i loro dati, preservando la privacy. Ogni metodo ha la sua strategia di aggregazione personalizzata.
+This repository contains implementations of Federated Learning using Flower (flwr) for different Machine Learning algorithms. The goal is to enable multiple clients to collaborate in model training without directly sharing their data, preserving privacy. Each method has its own customized aggregation strategy.
 
-## Struttura della Repository
+## Repository Structure
 
-La repository è suddivisa in tre directory principali, ognuna delle quali implementa un diverso algoritmo di Machine Learning in un contesto federato. Ogni cartella include il proprio README con maggiori dettagli sulla specifica implementazione:
+The repository is divided into three main directories, each implementing a different Machine Learning algorithm in a federated setting. Each folder includes its own README with more details on the specific implementation:
 
 ### 1. **Federated Random Forest**
 - **Directory:** `RF_federation_gt/`
-- **Descrizione:** Implementa un Random Forest federato, in cui i client addestrano i propri modelli di Random Forest localmente e il server aggrega gli alberi in un'unica foresta globale.
-- **Aggregazione:** Gli alberi vengono uniti e potati in base a metriche di performance.
-- **Esecuzione:**
-  - Simulazione locale:  
+- **Description:** Implements a federated Random Forest where clients train their own Random Forest models locally, and the server aggregates the trees into a single global forest.
+- **Aggregation:** Trees are merged and pruned based on performance metrics.
+- **Execution:**
+  - Local simulation:  
     ```bash
     flwr run new_new_new_federation
     ```
-  - Deployment distribuito:
-    - Avviare il server:  
+  - Distributed deployment:
+    - Start the server:  
       ```bash
       python -m new_new_new_federation.server_app
       ```
-    - Avviare i client:  
+    - Start the clients:  
       ```bash
       python -m new_new_new_federation.client_app
       ```
 
 ### 2. **Federated Logistic Regression**
 - **Directory:** `new-new-federation-logistic/`
-- **Descrizione:** Implementa una regressione logistica federata utilizzando Flower e scikit-learn.
-- **Aggregazione:** I pesi dei modelli vengono mediati tra i client.
-- **Esecuzione:**
-  - Simulazione locale:  
+- **Description:** Implements a federated logistic regression model using Flower and scikit-learn.
+- **Aggregation:** Model weights are averaged across clients.
+- **Execution:**
+  - Local simulation:  
     ```bash
     flwr run .
     ```
-  - Deployment distribuito seguendo la documentazione di Flower.
+  - Distributed deployment following the Flower documentation.
 
-### 3. **Federated SVM con Stochastic Gradient Descent (SGD)**
+### 3. **Federated SVM with Stochastic Gradient Descent (SGD)**
 - **Directory:** `new-new-federation-svm/`
-- **Descrizione:** Implementa un modello SVM federato addestrato con Stochastic Gradient Descent (SGD).
-- **Aggregazione:** I gradienti vengono aggregati dal server per aggiornare il modello globale.
-- **Esecuzione:**
-  - Simulazione locale:  
+- **Description:** Implements a federated SVM model trained with Stochastic Gradient Descent (SGD).
+- **Aggregation:** Gradients are aggregated by the server to update the global model.
+- **Execution:**
+  - Local simulation:  
     ```bash
     flwr run .
     ```
-  - Deployment distribuito seguendo la documentazione di Flower.
+  - Distributed deployment following the Flower documentation.
 
-## Requisiti
+## Requirements
 
-Assicurati di avere Python 3.8+ installato e installa i pacchetti richiesti con:
+Make sure you have Python 3.8+ installed and install the required packages with:
 ```bash
 pip install -e .
