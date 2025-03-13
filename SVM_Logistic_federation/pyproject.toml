@@ -1,0 +1,39 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "new-new-federation"
+version = "1.0.0"
+description = ""
+license = "Apache-2.0"
+dependencies = [
+    "flwr[simulation]>=1.15.2",
+    "flwr-datasets[vision]>=0.5.0",
+    "scikit-learn>=1.6.1",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
+
+[tool.flwr.app]
+publisher = "n3p7un"
+
+[tool.flwr.app.components]
+serverapp = "new_new_federation.server_app:app"
+clientapp = "new_new_federation.client_app:app"
+
+[tool.flwr.app.config]
+num-server-rounds = 50
+penalty = "l1"
+local-epochs = 20
+loss = 'log_loss' # Change to 'hinge' for SVM
+num-clients = 10
+balance-method = "undersample" # or: "oversample" | "none"
+sampling-ratio = 1.0 # if undersample->ratio=negative/positive; if oversample ratio=mult minority class
+
+[tool.flwr.federations]
+default = "local-simulation"
+
+[tool.flwr.federations.local-simulation]
+options.num-supernodes = 10
