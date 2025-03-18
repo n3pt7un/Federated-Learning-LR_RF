@@ -178,7 +178,7 @@ def get_model(penalty: str, local_epochs: int, loss: str):
     Args:
         penalty: Regularization type ('l1', 'l2', 'elasticnet', or None)
         local_epochs: Number of training epochs/iterations
-        loss: Loss function ('hinge' for SVM, 'log_loss' for LogReg)
+        loss: Loss function ('hinge' for SVM, 'modified_huber' for probability SVM, 'log_loss' for LogReg)
     """
     logger.info(f"Creating model with loss={loss}, penalty={penalty}, local_epochs={local_epochs}")
     
@@ -188,11 +188,25 @@ def get_model(penalty: str, local_epochs: int, loss: str):
             penalty=penalty,
             max_iter=local_epochs,
             warm_start=True,
-            learning_rate='adaptive',  # Add adaptive learning rate
-            eta0=0.01,  # Initial learning rate
+            learning_rate='optimal',  # 'optimal' often works better than 'adaptive'
+            alpha=0.001,  # Explicit regularization strength
             tol=1e-4,   # Convergence tolerance
             n_jobs=-1,  # Use all available cores
             random_state=42,  # For reproducibility
+        )
+    elif loss == 'modified_huber':
+        return SGDClassifier(
+            loss=loss,
+            penalty=penalty,
+            max_iter=local_epochs,
+            warm_start=True,
+            learning_rate='optimal',
+            alpha=0.0001,
+            class_weight='balanced',
+            tol=1e-4,
+            shuffle=True,
+            n_jobs=-1,
+            random_state=42,
         )
     else:  # default to LogisticRegression for 'log_loss'
         return LogisticRegression(

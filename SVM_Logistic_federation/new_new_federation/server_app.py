@@ -210,7 +210,7 @@ def server_fn(context: Context):
     # Define strategy
     strategy = CustomFedAvg(
         fraction_fit=0.5,
-        fraction_evaluate=0.8,
+        fraction_evaluate=1,
         min_available_clients=2,
         initial_parameters=initial_parameters,
         evaluate_fn=get_evaluate_fn(model, loss, balance_method, sampling_ratio),

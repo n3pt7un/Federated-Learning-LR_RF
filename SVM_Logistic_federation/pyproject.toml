@@ -25,15 +25,15 @@ clientapp = "new_new_federation.client_app:app"
 
 [tool.flwr.app.config]
 num-server-rounds = 50
-penalty = "l1"
-local-epochs = 20
-loss = 'log_loss' # Change to 'hinge' for SVM
-num-clients = 10
+penalty = "l2"
+local-epochs = 15
+loss = 'log_loss' # Change to 'hinge' for SVM or modified_huber 
+num-clients = 20
 balance-method = "undersample" # or: "oversample" | "none"
-sampling-ratio = 1.0 # if undersample->ratio=negative/positive; if oversample ratio=mult minority class
+sampling-ratio = 2.0 # if undersample->ratio=negative/positive; if oversample ratio=mult minority class
 
 [tool.flwr.federations]
 default = "local-simulation"
 
 [tool.flwr.federations.local-simulation]
-options.num-supernodes = 10
+options.num-supernodes = 20
