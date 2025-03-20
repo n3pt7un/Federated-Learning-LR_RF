@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "SVMFederation"
+name = "SVMfederation"
 version = "1.0.0"
 description = ""
 license = "Apache-2.0"
@@ -20,15 +20,15 @@ packages = ["."]
 publisher = "n3p7un"
 
 [tool.flwr.app.components]
-serverapp = "SVMFederation.server_app:app"
-clientapp = "SVMFederation.client_app:app"
+serverapp = "SVMfederation.server_app:app"
+clientapp = "SVMfederation.client_app:app"
 
 [tool.flwr.app.config]
 num-server-rounds = 10
 penalty = "l2"
 local-epochs = 15
-loss = 'log_loss' # Change to 'hinge' for SVM or modified_huber 
-num-clients = 25
+loss = 'hinge' # Change to 'hinge' for SVM or modified_huber 
+num-clients = 10
 balance-method = "undersample" # or: "oversample" | "none"
 sampling-ratio = 2.0 # if undersample->ratio=negative/positive; if oversample ratio=mult minority class
 
@@ -36,4 +36,4 @@ sampling-ratio = 2.0 # if undersample->ratio=negative/positive; if oversample ra
 default = "local-simulation"
 
 [tool.flwr.federations.local-simulation]
-options.num-supernodes = 25
+options.num-supernodes = 10

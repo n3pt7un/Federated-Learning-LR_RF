@@ -84,16 +84,12 @@ Key parameters can be configured in `pyproject.toml`:
 [tool.flwr.app.config]
 num-server-rounds = 10      # Number of federated rounds
 penalty = "l2"              # Regularization type
-local-epochs = 15           # Per-client training iterations
-loss = 'hinge'           
+local-epochs = 20           # Per-client training iterations
+loss = 'log_loss'           # 'log_loss' or 'hinge' for LogReg/SVM
 num-clients = 25            # Number of federated clients
 balance-method = "undersample" # "undersample", "oversample", or "none"
-sampling-ratio = 2.0        # Balance ratio for class handling
+sampling-ratio = 1.0        # Balance ratio for class handling
 ```
-
-7800 train set batch size, 1900 test set batch size. Repreated across 25 nodes.
-
-Approximate training time(Mac Mini M4 16Gb ram): 58.40s - 10 rounds
 
 ## Resources
 
