@@ -1,5 +1,7 @@
 # Federated Learning with Flower
 
+DISCLAIMER: THE SOFTWARE IN THIS REPOSITORY IS FOR RESEARCH PURPOSES ONLY AND IS CONSTANTLY BEING UPDATED OR MODIFIED. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 This repository contains implementations of Federated Learning using Flower (flwr) for different Machine Learning algorithms. The goal is to enable multiple clients to collaborate in model training without directly sharing their data, preserving privacy. Each method has its own customized aggregation strategy.
 
 ## Repository Structure
